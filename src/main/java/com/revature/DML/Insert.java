@@ -20,7 +20,7 @@ public class Insert<T>{
         this.model = model;
     }
 
-    public int insert(){
+    public int insert() throws SQLException, InvocationTargetException, IllegalAccessException {
         String tableName = model.getTableName();
         String sqlId = "SELECT MAX(" + model.getPrimaryKey().getColumnName() + ") FROM " + tableName + ";";
         String sql = "INSERT INTO " + tableName + " (";
@@ -42,38 +42,35 @@ public class Insert<T>{
         }
         sql = sql.concat("?);");
 
-        try(Connection connection = ConnectionFactory.getConnection()){
-            DatabaseMetaData dbm = connection.getMetaData();
-            ResultSet tables = dbm.getTables(null,null,tableName,null);
-            if(!tables.next()){
-                Create.createTable(tableName, model.getPrimaryKey().getColumnName(), colFields);
-            }
-            PreparedStatement ps = connection.prepareStatement(sql);
-            for(int i = 1; i <= count; i++){
-                int finalI = i;
-                ps.setObject(i,Arrays.stream(obj.getClass().getDeclaredMethods())
-                        .filter(m -> m.getName().equalsIgnoreCase("get" + fieldNames[finalI]))
-                        .findFirst().orElseThrow(RuntimeException::new)
-                        .invoke(obj));
-            }
+        int result = -1;
 
-            ps.execute();
+        Connection connection = ConnectionFactory.getConnection();
 
-            PreparedStatement psId = connection.prepareStatement(sqlId);
-            ResultSet rs = psId.executeQuery();
-
-            if(rs.next()){
-                return rs.getInt(1);
-            }
-
-        } catch (SQLException e){
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        DatabaseMetaData dbm = connection.getMetaData();
+        ResultSet tables = dbm.getTables(null,null,tableName,null);
+        if(!tables.next()){
+            Create.createTable(tableName, model.getPrimaryKey().getColumnName(), colFields);
+        }
+        PreparedStatement ps = connection.prepareStatement(sql);
+        for(int i = 1; i <= count; i++){
+            int finalI = i;
+            ps.setObject(i,Arrays.stream(obj.getClass().getDeclaredMethods())
+                    .filter(m -> m.getName().equalsIgnoreCase("get" + fieldNames[finalI]))
+                    .findFirst().orElseThrow(RuntimeException::new)
+                    .invoke(obj));
         }
 
-        return -1;
+        ps.execute();
+
+        PreparedStatement psId = connection.prepareStatement(sqlId);
+        ResultSet rs = psId.executeQuery();
+
+        if(rs.next()){
+            result =  rs.getInt(1);
+        }
+
+        connection.close();
+
+        return result;
     }
 }

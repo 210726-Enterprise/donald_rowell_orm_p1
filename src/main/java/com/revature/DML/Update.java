@@ -20,7 +20,7 @@ public class Update<T>{
         this.model = model;
     }
 
-    public boolean update(){
+    public boolean update() throws SQLException, InvocationTargetException, IllegalAccessException {
         String sql = "UPDATE " + model.getTableName() + " SET ";
         int count = 0;
         String[] fieldNames = new String[model.getColumnFields().size()];
@@ -32,36 +32,24 @@ public class Update<T>{
         sql = sql.substring(0,sql.lastIndexOf(','));
         sql = sql.concat(" WHERE " + model.getPrimaryKey().getColumnName() + " = ?;");
 
-        try(Connection connection = ConnectionFactory.getConnection()){
-            PreparedStatement ps = connection.prepareStatement(sql);
-            for(int i = 1; i <= count; i++){
-                int finalI = i-1;
-                ps.setObject(i, Arrays.stream(obj.getClass().getDeclaredMethods())
-                        .filter(m -> m.getName().equalsIgnoreCase("get" + fieldNames[finalI]))
-                        .findFirst().orElseThrow(RuntimeException::new)
-                        .invoke(obj));
-            }
-
-            ps.setInt(count+1, (Integer) Arrays.stream(obj.getClass().getDeclaredMethods())
-                    .filter(m -> m.getName().equalsIgnoreCase("get" + model.getPrimaryKey().getFieldName()))
+        Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sql);
+        for(int i = 1; i <= count; i++){
+            int finalI = i-1;
+            ps.setObject(i, Arrays.stream(obj.getClass().getDeclaredMethods())
+                    .filter(m -> m.getName().equalsIgnoreCase("get" + fieldNames[finalI]))
                     .findFirst().orElseThrow(RuntimeException::new)
                     .invoke(obj));
-
-            ps.execute();
-
-        } catch(SQLException e){
-            e.printStackTrace();
-            // logging
-            return false;
-        } catch(IllegalAccessException e){
-            e.printStackTrace();
-            // logging
-            return false;
-        } catch(InvocationTargetException e){
-            e.printStackTrace();
-            // logging
-            return false;
         }
+
+        ps.setInt(count+1, (Integer) Arrays.stream(obj.getClass().getDeclaredMethods())
+                .filter(m -> m.getName().equalsIgnoreCase("get" + model.getPrimaryKey().getFieldName()))
+                .findFirst().orElseThrow(RuntimeException::new)
+                .invoke(obj));
+
+        ps.execute();
+
+        connection.close();
         return true;
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Create {
 
-    public static void createTable(String tableName, String pk, List<ColumnField> columnFields) {
+    public static void createTable(String tableName, String pk, List<ColumnField> columnFields) throws SQLException {
         String sql = "CREATE TABLE " + tableName
                 + "( " + pk + " SERIAL PRIMARY KEY, ";
 
@@ -22,20 +22,17 @@ public class Create {
 
         sql = sql.concat(");");
 
-        try(Connection connection = ConnectionFactory.getConnection()){
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.execute();
-        }catch(SQLException e){
-            //logging
-        }
-
+        Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.execute();
+        connection.close();
     }
 
     private static String columnType(Class<?> fieldType){
-        if(fieldType.getSimpleName().equalsIgnoreCase("String")){
+        if(fieldType.getSimpleName().contains("String")){
             return "VARCHAR";
         }
-        else if(fieldType.getSimpleName().equalsIgnoreCase("Boolean")){
+        else if(fieldType.getSimpleName().contains("Boolean")){
             return "BOOLEAN";
         } else{
             return "REAL";

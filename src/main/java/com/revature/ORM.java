@@ -4,6 +4,7 @@ import com.revature.DML.*;
 import com.revature.model.BasicModel;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 public class ORM<T> {
@@ -14,7 +15,7 @@ public class ORM<T> {
         this.model = new BasicModel<>(clazz);
     }
 
-    public int insert(T obj) {
+    public int insert(T obj) throws SQLException, InvocationTargetException, IllegalAccessException {
         Insert<T> insert = new Insert(obj, model);
         return insert.insert();
     }
@@ -24,12 +25,12 @@ public class ORM<T> {
         return select;
     }
 
-    public boolean update(T obj) {
+    public boolean update(T obj) throws SQLException, InvocationTargetException, IllegalAccessException {
         Update<T> update = new Update(obj, model);
         return update.update();
     }
 
-    public boolean delete(T obj) throws InvocationTargetException, IllegalAccessException {
+    public boolean delete(T obj) throws InvocationTargetException, IllegalAccessException, SQLException {
         int id = (Integer) Arrays.stream(obj.getClass().getDeclaredMethods())
                             .filter(m -> m.getName().equalsIgnoreCase("get" + model.getPrimaryKey().getFieldName()))
                             .findFirst().orElseThrow(RuntimeException::new)

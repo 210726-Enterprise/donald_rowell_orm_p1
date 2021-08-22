@@ -8,18 +8,16 @@ import java.sql.SQLException;
 
 public class Delete{
 
-    public static boolean delete(int id, String tableName, String pk){
+    public static boolean delete(int id, String tableName, String pk) throws SQLException {
         String sql = "DELETE FROM " + tableName + " WHERE " + pk + " = ?;";
 
-        try(Connection connection = ConnectionFactory.getConnection()){
-            PreparedStatement ps = connection.prepareStatement(sql);
+        Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sql);
 
-            ps.setInt(1,id);
+        ps.setInt(1,id);
 
-            ps.execute();
-        } catch (SQLException e) {
-            return false;
-        }
+        ps.execute();
+        connection.close();
         return true;
     }
 }

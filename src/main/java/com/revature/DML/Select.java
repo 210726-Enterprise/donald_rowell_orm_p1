@@ -1,7 +1,5 @@
 package com.revature.DML;
 
-import com.revature.annotations.Column;
-import com.revature.annotations.Table;
 import com.revature.model.BasicModel;
 import com.revature.model.ColumnField;
 import com.revature.util.ConnectionFactory;
@@ -29,6 +27,33 @@ public class Select<T>{
                 .findFirst().orElseThrow(RuntimeException::new).newInstance();
     }
 
+    public T where(String col, int id) throws Exception {
+
+        String sql = "SELECT * FROM " + model.getTableName() + " WHERE " + col.toLowerCase() + " = ?;";
+
+        Method[] methods = o.getClass().getMethods();
+
+        Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1,id);
+
+        ResultSet rs = ps.executeQuery();
+        ResultSetMetaData md = rs.getMetaData();
+
+        if(rs.next()){
+
+            Arrays.stream(methods)
+                    .filter(setter -> setter.getName().equalsIgnoreCase("set"+model.getPrimaryKey().getFieldName()))
+                    .findFirst().orElseThrow(RuntimeException::new)
+                    .invoke(o,rs.getObject(1));
+            for(ColumnField colField : model.getColumnFields()){
+                colField.getField().setAccessible(true);
+                colField.getField().set(o, rs.getObject(colField.getColumnName()));
+            }
+        }
+        connection.close();
+        return o;
+    }
 
     public T where(String col, Object val) throws Exception {
 
@@ -36,28 +61,25 @@ public class Select<T>{
 
         Method[] methods = o.getClass().getMethods();
 
-        try(Connection connection = ConnectionFactory.getConnection()){
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setObject(1,val);
+        Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setObject(1,val);
 
-            ResultSet rs = ps.executeQuery();
-            ResultSetMetaData md = rs.getMetaData();
+        ResultSet rs = ps.executeQuery();
+        ResultSetMetaData md = rs.getMetaData();
 
-            if(rs.next()){
+        if(rs.next()){
 
-                Arrays.stream(methods)
-                        .filter(setter -> setter.getName().equalsIgnoreCase("set"+model.getPrimaryKey().getFieldName()))
-                        .findFirst().orElseThrow(RuntimeException::new)
-                        .invoke(o,rs.getObject(1));
-                for(ColumnField colField : model.getColumnFields()){
-                    colField.getField().setAccessible(true);
-                    colField.getField().set(o, rs.getObject(colField.getColumnName()));
-                }
+            Arrays.stream(methods)
+                    .filter(setter -> setter.getName().equalsIgnoreCase("set"+model.getPrimaryKey().getFieldName()))
+                    .findFirst().orElseThrow(RuntimeException::new)
+                    .invoke(o,rs.getObject(1));
+            for(ColumnField colField : model.getColumnFields()){
+                colField.getField().setAccessible(true);
+                colField.getField().set(o, rs.getObject(colField.getColumnName()));
             }
-        }catch(SQLException e){
-            // logging
-            throw new SQLException("Failed to get model given criteria.");
         }
+        connection.close();
         return o;
     }
 }
