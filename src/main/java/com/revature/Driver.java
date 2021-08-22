@@ -15,7 +15,7 @@ public class Driver {
         orm.insert(user);
 
         // select user given a valid criteria
-        user = (User) orm.setModel(user.getClass()).select().where("email","test@test.com");
+        user = (User) orm.select(user.getClass()).where("email","test@test.com");
 
         // update user value
         orm.update(user);

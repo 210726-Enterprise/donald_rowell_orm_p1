@@ -33,7 +33,7 @@ public class Select<T> extends ORM<T> {
 
     public T where(String col, Object val) throws Exception {
 
-        String sql = "SELECT * FROM " + model.getClass().getAnnotation(Table.class).tableName() + " WHERE " + col.toLowerCase() + " = ?;";
+        String sql = "SELECT * FROM " + model.getTableName() + " WHERE " + col.toLowerCase() + " = ?;";
 
         Method[] methods = o.getClass().getMethods();
 

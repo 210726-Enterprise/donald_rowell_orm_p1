@@ -30,8 +30,8 @@ public class BasicModel<T> {
         return clazz.getName();
     }
 
-    public String getSimpleClassName(){
-        return clazz.getSimpleName();
+    public String getTableName(){
+        return clazz.getAnnotation(Table.class).tableName();
     }
 
     public PrimaryKeyField getPrimaryKey(){
