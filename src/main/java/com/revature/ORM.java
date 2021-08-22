@@ -10,8 +10,8 @@ import java.util.Arrays;
 public class ORM<T> {
 
     private DDL ddl;
-    protected BasicModel<T> model;
-    protected static String[] db;
+    private BasicModel<T> model;
+    private String[] db = new String[3];
 
     public ORM(){}
 /*
@@ -37,20 +37,20 @@ public class ORM<T> {
 
     public int insert(T obj) {
         setModel((Class<T>) obj.getClass());
-        Insert insert = new Insert(obj, model);
-        return insert.insert();
+        Insert<T> insert = new Insert(db, obj);
+        return insert.insert(model);
     }
 
     public Select select(Class<T> clazz) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         setModel(clazz);
-        Select<T> select = new Select(model);
+        Select<T> select = new Select(db, model);
         return select;
     }
 
     public boolean update(T obj) {
         setModel((Class<T>) obj.getClass());
-        Update update = new Update(obj, model);
-        return update.update();
+        Update<T> update = new Update(obj, model);
+        return update.update(db);
     }
 
     public boolean delete(T obj) throws InvocationTargetException, IllegalAccessException {
@@ -59,7 +59,7 @@ public class ORM<T> {
                             .filter(m -> m.getName().equalsIgnoreCase("get" + model.getPrimaryKey().getFieldName()))
                             .findFirst().orElseThrow(RuntimeException::new)
                             .invoke(obj);
-        return Delete.delete(id, model.getTableName(), model.getPrimaryKey().getColumnName());
+        return Delete.delete(db, id, model.getTableName(), model.getPrimaryKey().getColumnName());
     }
 
     private void setModel(Class<T> clazz){

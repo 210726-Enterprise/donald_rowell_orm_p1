@@ -16,10 +16,12 @@ import java.util.stream.Collectors;
 
 public class Select<T> extends ORM<T> {
 
-    BasicModel<T> model;
+    private String[] db;
+    private BasicModel<T> model;
     private T o;
 
-    public Select(BasicModel<T> model) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Select(String[] db, BasicModel<T> model) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+        this.db = db;
         this.model = model;
         o = null;
 

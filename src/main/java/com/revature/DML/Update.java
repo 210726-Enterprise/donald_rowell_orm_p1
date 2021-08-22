@@ -1,7 +1,6 @@
 package com.revature.DML;
 
 import com.revature.ORM;
-import com.revature.annotations.Table;
 import com.revature.model.BasicModel;
 import com.revature.model.ColumnField;
 import com.revature.util.ConnectionFactory;
@@ -11,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.List;
 
 public class Update<T> extends ORM<T> {
 
@@ -23,7 +21,7 @@ public class Update<T> extends ORM<T> {
         this.model = model;
     }
 
-    public boolean update(){
+    public boolean update(String[] db){
         String sql = "UPDATE " + model.getTableName() + " SET ";
         int count = 0;
         String[] fieldNames = new String[model.getColumnFields().size()];
@@ -35,7 +33,7 @@ public class Update<T> extends ORM<T> {
         sql = sql.substring(0,sql.lastIndexOf(','));
         sql = sql.concat(" WHERE " + model.getPrimaryKey().getColumnName() + " = ?;");
 
-        try(Connection connection = ConnectionFactory.getConnection(ORM.db)){
+        try(Connection connection = ConnectionFactory.getConnection(db)){
             PreparedStatement ps = connection.prepareStatement(sql);
             for(int i = 1; i <= count; i++){
                 int finalI = i-1;

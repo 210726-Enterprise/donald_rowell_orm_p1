@@ -5,22 +5,34 @@ import java.lang.reflect.InvocationTargetException;
 public class Driver {
 
     public static void main(String[] args) throws Exception {
-        String url = "db";
-        String userName = "postgres";
-        String password = "password";
-        User user = new User();
+        String url = System.getenv("db_url");
+        String userName = System.getenv("db_username");
+        String password = System.getenv("db_password");
+        User user = new User("don", "pass", "test@test.com");
         ORM orm = new ORM(url, userName, password);
 
+        System.out.println(url);
+        System.out.println(userName);
+        System.out.println(password);
+        System.out.println(user);
         // insert user into table
-        orm.insert(user);
+        user.setId(orm.insert(user));
 
+        System.out.println(user);
         // select user given a valid criteria
-        user = (User) orm.select(user.getClass()).where("email","test@test.com");
+        User newUser = (User) orm.select(user.getClass()).where("user_name","Test");
 
+        System.out.println(user);
+        System.out.println(newUser);
         // update user value
-        orm.update(user);
+        boolean updateTest = orm.update(user);
 
+        System.out.println(updateTest);
+        System.out.println(user);
+        System.out.println(newUser);
         // delete user from table
-        orm.delete(user);
+        boolean deleteTest = orm.delete(user);
+
+        System.out.println(deleteTest);
     }
 }

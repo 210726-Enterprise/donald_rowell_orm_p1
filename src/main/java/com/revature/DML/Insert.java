@@ -1,12 +1,11 @@
 package com.revature.DML;
 
+import com.revature.DDL.Create;
 import com.revature.ORM;
-import com.revature.annotations.Table;
 import com.revature.model.BasicModel;
 import com.revature.model.ColumnField;
 import com.revature.util.ConnectionFactory;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.Arrays;
@@ -15,14 +14,14 @@ import java.util.List;
 public class Insert<T> extends ORM<T> {
 
     private T obj;
-    private BasicModel<T> model;
+    private String[] db;
 
-    public Insert(T obj, BasicModel<T> model) {
+    public Insert(String[] db, T obj) {
         this.obj = obj;
-        this.model = model;
+        this.db = db;
     }
 
-    public int insert(){
+    public int insert(BasicModel<T> model){
         String tableName = model.getTableName();
         String sqlId = "SELECT MAX(" + model.getPrimaryKey().getColumnName() + ") FROM " + tableName + ";";
         String sql = "INSERT INTO " + tableName + " (";
@@ -44,11 +43,11 @@ public class Insert<T> extends ORM<T> {
         }
         sql = sql.concat("?);");
 
-        try(Connection connection = ConnectionFactory.getConnection(ORM.db)){
+        try(Connection connection = ConnectionFactory.getConnection(this.db)){
             DatabaseMetaData dbm = connection.getMetaData();
             ResultSet tables = dbm.getTables(null,null,tableName,null);
             if(!tables.next()){
-                // Create table
+                Create.createTable(this.db, tableName, model.getPrimaryKey().getColumnName(), colFields);
             }
             PreparedStatement ps = connection.prepareStatement(sql);
             for(int i = 1; i <= count; i++){
