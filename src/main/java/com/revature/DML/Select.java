@@ -1,6 +1,5 @@
 package com.revature.DML;
 
-import com.revature.ORM;
 import com.revature.annotations.Column;
 import com.revature.annotations.Table;
 import com.revature.model.BasicModel;
@@ -61,35 +60,4 @@ public class Select<T>{
         }
         return o;
     }
-/*
-    public Optional<List<T>> all() throws InvocationTargetException, InstantiationException, IllegalAccessException {
-        String sql = "SELECT * FROM " + model.getClass().getAnnotation(Table.class).tableName() + ";";
-
-        Method[] methods = o.getClass().getMethods();
-
-        try(Connection connection = ConnectionFactory.getConnection(db)){
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setObject(1,val);
-
-            ResultSet rs = ps.executeQuery();
-            ResultSetMetaData md = rs.getMetaData();
-
-            while(rs.next()){
-                for(int i = 0; i < md.getColumnCount(); i++){
-                    String columnName = md.getColumnName(i);
-                    Arrays.stream(methods)
-                            .filter(setter -> setter.getName().equals("set"+columnName))
-                            .findFirst().orElseThrow(RuntimeException::new)
-                            .invoke(o,rs.getObject(i));
-                }
-            }
-
-        }catch(SQLException e){
-            // logging
-        }
-
-
-
-        return o;
-    }*/
 }

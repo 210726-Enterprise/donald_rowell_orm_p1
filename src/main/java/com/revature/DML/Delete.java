@@ -1,6 +1,5 @@
 package com.revature.DML;
 
-import com.revature.ORM;
 import com.revature.util.ConnectionFactory;
 
 import java.sql.Connection;
