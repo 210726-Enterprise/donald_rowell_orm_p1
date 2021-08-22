@@ -14,14 +14,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class Select<T> extends ORM<T> {
+public class Select<T>{
 
-    private String[] db;
     private BasicModel<T> model;
     private T o;
 
-    public Select(String[] db, BasicModel<T> model) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-        this.db = db;
+    public Select(BasicModel<T> model) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         this.model = model;
         o = null;
 
@@ -39,7 +37,7 @@ public class Select<T> extends ORM<T> {
 
         Method[] methods = o.getClass().getMethods();
 
-        try(Connection connection = ConnectionFactory.getConnection(db)){
+        try(Connection connection = ConnectionFactory.getConnection()){
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setObject(1,val);
 

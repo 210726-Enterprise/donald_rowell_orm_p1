@@ -7,12 +7,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Delete extends ORM {
+public class Delete{
 
-    public static boolean delete(String[] db, int id, String tableName, String pk){
+    public static boolean delete(int id, String tableName, String pk){
         String sql = "DELETE FROM " + tableName + " WHERE " + pk + " = ?;";
 
-        try(Connection connection = ConnectionFactory.getConnection(db)){
+        try(Connection connection = ConnectionFactory.getConnection()){
             PreparedStatement ps = connection.prepareStatement(sql);
 
             ps.setInt(1,id);

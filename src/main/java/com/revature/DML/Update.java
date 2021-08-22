@@ -11,7 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-public class Update<T> extends ORM<T> {
+public class Update<T>{
 
     private T obj;
     private BasicModel<T> model;
@@ -21,7 +21,7 @@ public class Update<T> extends ORM<T> {
         this.model = model;
     }
 
-    public boolean update(String[] db){
+    public boolean update(){
         String sql = "UPDATE " + model.getTableName() + " SET ";
         int count = 0;
         String[] fieldNames = new String[model.getColumnFields().size()];
@@ -33,7 +33,7 @@ public class Update<T> extends ORM<T> {
         sql = sql.substring(0,sql.lastIndexOf(','));
         sql = sql.concat(" WHERE " + model.getPrimaryKey().getColumnName() + " = ?;");
 
-        try(Connection connection = ConnectionFactory.getConnection(db)){
+        try(Connection connection = ConnectionFactory.getConnection()){
             PreparedStatement ps = connection.prepareStatement(sql);
             for(int i = 1; i <= count; i++){
                 int finalI = i-1;

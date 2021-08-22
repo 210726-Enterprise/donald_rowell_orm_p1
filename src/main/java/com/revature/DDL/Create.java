@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Create {
 
-    public static void createTable(String[] db, String tableName, String pk, List<ColumnField> columnFields) {
+    public static void createTable(String tableName, String pk, List<ColumnField> columnFields) {
         String sql = "CREATE TABLE " + tableName
                 + "( " + pk + " SERIAL PRIMARY KEY, ";
 
@@ -22,7 +22,7 @@ public class Create {
 
         sql = sql.concat(");");
 
-        try(Connection connection = ConnectionFactory.getConnection(db)){
+        try(Connection connection = ConnectionFactory.getConnection()){
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.execute();
         }catch(SQLException e){

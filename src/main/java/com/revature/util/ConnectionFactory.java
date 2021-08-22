@@ -11,10 +11,10 @@ public class ConnectionFactory {
 
     private static Connection connection;
 
-    public static Connection getConnection(String[] db) {
+    public static Connection getConnection() {
 
         try {
-            connection = DriverManager.getConnection(db[0],db[1],db[2]);
+            connection = DriverManager.getConnection(System.getenv("db_url"),System.getenv("db_username"),System.getenv("db_password"));
         } catch (SQLException e) {
             e.printStackTrace();
         }

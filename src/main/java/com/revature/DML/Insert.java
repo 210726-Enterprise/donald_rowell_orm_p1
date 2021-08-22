@@ -1,7 +1,6 @@
 package com.revature.DML;
 
 import com.revature.DDL.Create;
-import com.revature.ORM;
 import com.revature.model.BasicModel;
 import com.revature.model.ColumnField;
 import com.revature.util.ConnectionFactory;
@@ -11,17 +10,17 @@ import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
 
-public class Insert<T> extends ORM<T> {
+public class Insert<T>{
 
     private T obj;
-    private String[] db;
+    private BasicModel<T> model;
 
-    public Insert(String[] db, T obj) {
+    public Insert(T obj, BasicModel<T> model) {
         this.obj = obj;
-        this.db = db;
+        this.model = model;
     }
 
-    public int insert(BasicModel<T> model){
+    public int insert(){
         String tableName = model.getTableName();
         String sqlId = "SELECT MAX(" + model.getPrimaryKey().getColumnName() + ") FROM " + tableName + ";";
         String sql = "INSERT INTO " + tableName + " (";
@@ -43,11 +42,11 @@ public class Insert<T> extends ORM<T> {
         }
         sql = sql.concat("?);");
 
-        try(Connection connection = ConnectionFactory.getConnection(this.db)){
+        try(Connection connection = ConnectionFactory.getConnection()){
             DatabaseMetaData dbm = connection.getMetaData();
             ResultSet tables = dbm.getTables(null,null,tableName,null);
             if(!tables.next()){
-                Create.createTable(this.db, tableName, model.getPrimaryKey().getColumnName(), colFields);
+                Create.createTable(tableName, model.getPrimaryKey().getColumnName(), colFields);
             }
             PreparedStatement ps = connection.prepareStatement(sql);
             for(int i = 1; i <= count; i++){
