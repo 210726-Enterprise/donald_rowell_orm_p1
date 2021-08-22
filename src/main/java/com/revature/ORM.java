@@ -1,6 +1,5 @@
 package com.revature;
 
-import com.revature.DDL.DDL;
 import com.revature.DML.*;
 import com.revature.model.BasicModel;
 
@@ -9,31 +8,16 @@ import java.util.Arrays;
 
 public class ORM<T> {
 
-    private DDL ddl;
     private BasicModel<T> model;
     private String[] db = new String[3];
 
     public ORM(){}
-/*
-    public ORM(Class<T> clazz){
-        ddl = new DDL();
-        model = new BasicModel<>(clazz);
-    }
-*/
+
     public ORM(String URL, String userName, String password){
         this.db[0] = URL;
         this.db[1] = userName;
         this.db[2] = password;
     }
-
-    public DDL DDL() {
-        return ddl;
-    }
-
-    public void setDdl(DDL ddl) {
-        this.ddl = ddl;
-    }
-
 
     public int insert(T obj) {
         setModel((Class<T>) obj.getClass());
