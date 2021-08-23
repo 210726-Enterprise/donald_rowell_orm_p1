@@ -5,7 +5,6 @@ import com.revature.model.BasicModel;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 public class ORM<T> {
 
@@ -21,7 +20,7 @@ public class ORM<T> {
     }
 
     public Select select(Class<T> clazz) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-        Select<T> select = new Select(model);
+        Select<T> select = new Select(model, clazz);
         return select;
     }
 

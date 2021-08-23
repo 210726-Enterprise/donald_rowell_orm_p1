@@ -14,9 +14,11 @@ public class ConnectionFactory {
     public static Connection getConnection() {
 
         try {
-            connection = DriverManager.getConnection(System.getenv("db_url"),System.getenv("db_username"),System.getenv("db_password"));
+            connection = DriverManager.getConnection("jdbc:postgresql://databank.cbu38mywfjcp.us-east-2.rds.amazonaws.com/postgres","postgres","password");
+            System.out.println("Database connected");
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Failed to make connection");
         }
 
         return connection;

@@ -7,23 +7,19 @@ import com.revature.util.ConnectionFactory;
 import java.lang.reflect.*;
 import java.sql.*;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class Select<T>{
 
     private BasicModel<T> model;
     private T o;
 
-    public Select(BasicModel<T> model) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Select(BasicModel<T> model, Class<T> clazz) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         this.model = model;
-        o = null;
 
-        Constructor<?>[] constructors = o.getClass().getConstructors();
+        Constructor<?>[] constructors = clazz.getConstructors();
 
         o = (T) Arrays.stream(constructors)
-                .filter(c -> c.getParameterTypes().length == 0) // grab the no arg constructor
+                .filter(c -> c.getParameterCount() == 0) // grab the no arg constructor
                 .findFirst().orElseThrow(RuntimeException::new).newInstance();
     }
 

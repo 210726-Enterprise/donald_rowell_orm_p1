@@ -53,7 +53,7 @@ public class Insert<T>{
         }
         PreparedStatement ps = connection.prepareStatement(sql);
         for(int i = 1; i <= count; i++){
-            int finalI = i;
+            int finalI = i-1;
             ps.setObject(i,Arrays.stream(obj.getClass().getDeclaredMethods())
                     .filter(m -> m.getName().equalsIgnoreCase("get" + fieldNames[finalI]))
                     .findFirst().orElseThrow(RuntimeException::new)
