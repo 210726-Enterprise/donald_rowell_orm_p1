@@ -30,11 +30,7 @@ public class ORM<T> {
         return update.update();
     }
 
-    public boolean delete(T obj) throws InvocationTargetException, IllegalAccessException, SQLException {
-        int id = (Integer) Arrays.stream(obj.getClass().getDeclaredMethods())
-                            .filter(m -> m.getName().equalsIgnoreCase("get" + model.getPrimaryKey().getFieldName()))
-                            .findFirst().orElseThrow(RuntimeException::new)
-                            .invoke(obj);
+    public boolean delete(int id) throws SQLException {
         return Delete.delete(id, model.getTableName(), model.getPrimaryKey().getColumnName());
     }
 }
