@@ -23,9 +23,9 @@ public class Select<T>{
                 .findFirst().orElseThrow(RuntimeException::new).newInstance();
     }
 
-    public T where(String col, int id) throws Exception {
+    public T where(int id) throws Exception {
 
-        String sql = "SELECT * FROM " + model.getTableName() + " WHERE " + col.toLowerCase() + " = ?;";
+        String sql = "SELECT * FROM " + model.getTableName() + " WHERE " + model.getPrimaryKey().getColumnName().toLowerCase() + " = ?;";
 
         Method[] methods = o.getClass().getMethods();
 
