@@ -80,8 +80,17 @@ public class Select<T>{
                     .findFirst().orElseThrow(RuntimeException::new)
                     .invoke(o,rs.getObject(1));
             for(ColumnField colField : model.getColumnFields()){
-                colField.getField().setAccessible(true);
-                colField.getField().set(o, rs.getObject(colField.getColumnName()));
+                if(rs.getObject(colField.getColumnName()).getClass().getSimpleName().equals("BigDecimal")){
+                    Arrays.stream(methods)
+                            .filter(setter -> setter.getName().equalsIgnoreCase("set"+colField.getFieldName()))
+                            .findFirst().orElseThrow(RuntimeException::new)
+                            .invoke(o, rs.getDouble(colField.getColumnName()));
+                } else {
+                    Arrays.stream(methods)
+                            .filter(setter -> setter.getName().equalsIgnoreCase("set" + colField.getFieldName()))
+                            .findFirst().orElseThrow(RuntimeException::new)
+                            .invoke(o, rs.getObject(colField.getColumnName()));
+                }
             }
         }
         connection.close();
