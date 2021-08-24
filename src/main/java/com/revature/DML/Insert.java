@@ -50,6 +50,7 @@ public class Insert<T>{
         ResultSet tables = dbm.getTables(null,null,tableName,null);
         if(!tables.next()){
             Create.createTable(tableName, model.getPrimaryKey().getColumnName(), colFields);
+            connection = ConnectionFactory.getConnection();
         }
         PreparedStatement ps = connection.prepareStatement(sql);
         for(int i = 1; i <= count; i++){
