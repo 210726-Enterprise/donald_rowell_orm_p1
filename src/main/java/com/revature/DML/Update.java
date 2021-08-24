@@ -47,9 +47,9 @@ public class Update<T>{
                 .findFirst().orElseThrow(RuntimeException::new)
                 .invoke(obj));
 
-        ps.execute();
+        int success = ps.executeUpdate();
 
         connection.close();
-        return true;
+        return success > 0;
     }
 }
