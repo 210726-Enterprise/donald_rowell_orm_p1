@@ -1,3 +1,37 @@
+# Custom ORM Frameword
+## Project Description
+A custom object relational mapping (ORM) framework, written in Java, which allows for a simplified and SQL-free interaction with a relational data source. Low-level JDBC is completely abstracted away from the developer, allowing them to easily query and persist data to a data source. Makes heavy use of the Java Reflection API in order to support any entity objects as defined by the developer.
+## Technologies Used
+- Java 8
+- PostgreSql
+- DBeaver
+- AWS RDS
+- Apache Maven
+- Git SCM (on GitHub)
+
+## Features
+List of features ready:
+- Able to perform simple CRUD operations (Insert, Select, Update, Delete)
+- JDBC logic abstracted away by the custom ORM
+- Dynamic creation of tables by custom ORM on Insert
+
+To-do List:
+- Dynamic configuration of database connection
+- Update GET methods to be able to retrieve more than one element
+- Add support for basic transaction management
+
+## Getting Started
+How to setup this code:
+1. Download the code within this repositry.
+2. 
+
+## Usage
+How to use this code
+
+## Contributors
+- [ ] Donald Rowell
+
+
 This ORM requires that the models that will be persisted into a database must have annotations that cover the following:
       
       The class must have a "Table" annotation with an argument of tableName = "Your table name".
